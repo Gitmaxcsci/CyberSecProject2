@@ -139,8 +139,12 @@ def main():
                 plain_message = decrypt_message(ciphertext_message, encrypted_key)
                 # TODO: Split response from user into the username and password
                 plain_message.split(' ', 1)
+                if verify_hash(plain_message[0], plain_message[1]):
+                    message = "User successfully Authenticated!"
+                else:
+                    message = "Password or username incorrect"
                 # TODO: Encrypt response to client
-
+                encrypt_message(message, plaintext_key)
                 # Send encrypted response
                 send_message(connection, ciphertext_response)
             finally:
