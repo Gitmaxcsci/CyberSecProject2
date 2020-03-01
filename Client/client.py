@@ -15,7 +15,8 @@
 
 import socket
 import os
-from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES, PKCS1_OAEP
 
 host = "localhost"
 port = 10001
@@ -34,12 +35,15 @@ def generate_key():
     return AES.new(key, AES.MODE_EAX)
 
 
-
 # Takes an AES session key and encrypts it using the appropriate
 # key and return the value
 def encrypt_handshake(session_key):
     # TODO: Implement this function
-    pass
+    server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub'))
+
+    #Encrypt the session key with the servers public RSA key
+    cipher_rsa = PKCS1_OAEP.new(server_public_key)
+    return cipher_rsa.encrypt(session_key)
 
 
 # Encrypts the message using AES. Same as server function
