@@ -50,6 +50,7 @@ def encrypt_handshake(session_key):
 def encrypt_message(message, session_key):
     # TODO: Implement this function
     message = message.encode("utf-8")
+    message = pad_message(message)
 
     server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 
@@ -68,7 +69,7 @@ def encrypt_message(message, session_key):
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     # TODO: Implement this function
-    client_message.split(' ', 1)
+    client_message.split(' ')
 
     p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 

@@ -31,7 +31,7 @@ def pad_message(message):
 # Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
     # TODO: Implement this function
-    p_key = RSA.import_key(open(os.path.dirname(__file__) + '/RSA_keys').read())
+    p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
 
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = cipher.decrypt(session_key)
@@ -41,9 +41,9 @@ def decrypt_key(session_key):
 # Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
     # TODO: Implement this function
-    client_message.split(' ', 1)
+    client_message.split(' ')
 
-    p_key = RSA.import_key(open("RSA_keys").read())
+    p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
 
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = cipher.decrypt(session_key)
@@ -59,8 +59,9 @@ def decrypt_message(client_message, session_key):
 def encrypt_message(message, session_key):
     # TODO: Implement this function
     message = message.encode("utf-8")
+    message = pad_message(message)
 
-    server_private_key = RSA.import_key(open("RSA_keys").read())
+    server_private_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
 
     #Encrypt the session key with the servers public RSA key
     cipher_rsa = PKCS1_OAEP.new(server_private_key)
