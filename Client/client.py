@@ -32,14 +32,14 @@ def pad_message(message):
 def generate_key():
     # TODO: Implement this function
     rand_key = os.urandom(16)
-    return AES.new(key, AES.MODE_EAX)
+    return AES.new(rand_key, AES.MODE_EAX)
 
 
 # Takes an AES session key and encrypts it using the appropriate
 # key and return the value
 def encrypt_handshake(session_key):
     # TODO: Implement this function
-    server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub'))
+    server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 
     #Encrypt the session key with the servers public RSA key
     cipher_rsa = PKCS1_OAEP.new(server_public_key)
@@ -51,7 +51,7 @@ def encrypt_message(message, session_key):
     # TODO: Implement this function
     message = message.encode("utf-8")
 
-    server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub'))
+    server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 
     #Encrypt the session key with the servers public RSA key
     cipher_rsa = PKCS1_OAEP.new(server_public_key)
@@ -68,7 +68,17 @@ def encrypt_message(message, session_key):
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     # TODO: Implement this function
-    pass
+    client_message.split(' ', 1)
+
+    p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
+
+    cipher = PKCS1_OAEP.new(p_key)
+    plainKey = cipher.decrypt(session_key)
+
+    server_message = AES.new(plainKey, AES.MODE_EAX)
+    print(server_message.decrypt_and_verify(client_message[0], client_message[1]))
+
+    return
 
 
 # Sends a message over TCP
