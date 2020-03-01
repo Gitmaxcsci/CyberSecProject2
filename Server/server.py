@@ -39,7 +39,7 @@ def decrypt_key(session_key):
 # Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
     # TODO: Implement this function
-    client_message.split(' ', 1)
+    client_message.split(' ')
 
     p_key = RSA.import_key(open("RSA_keys").read())
 
@@ -57,6 +57,8 @@ def decrypt_message(client_message, session_key):
 def encrypt_message(message, session_key):
     # TODO: Implement this function
     message = message.encode("utf-8")
+
+    message = pad_message(message)
 
     server_private_key = RSA.import_key(open("RSA_keys").read())
 
