@@ -49,7 +49,20 @@ def encrypt_handshake(session_key):
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    pass
+    message = message.encode("utf-8")
+
+    server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub'))
+
+    #Encrypt the session key with the servers public RSA key
+    cipher_rsa = PKCS1_OAEP.new(server_public_key)
+    enc_session_key = cipher_rsa.encrypt(session_key)
+
+    #Encrypt the user and pass with the AES session key
+    cipher_aes = AES.new(session_key, AES.MODE_EAX)
+    ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+
+    return ciphertext + " " + tag
+
 
 
 # Decrypts the message using AES. Same as server function
@@ -100,8 +113,13 @@ def main():
             exit(0)
 
         # TODO: Encrypt message and send to server
+        payload = encrypt_message(message, key)
+        send_message(sock, payload)
 
         # TODO: Receive and decrypt response from server
+        server_response = receive_message(sock)
+        decrypt_message(server_response, key)
+
     finally:
         print('closing socket')
         sock.close()
