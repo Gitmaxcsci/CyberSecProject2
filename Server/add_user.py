@@ -6,7 +6,6 @@
 	The solution contains the same number of lines (plus imports)
 """
 import bcrypt
-import time
 
 user = input("Enter a username: ")
 password = input("Enter a password: ")

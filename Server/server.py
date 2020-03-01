@@ -15,6 +15,7 @@
 
 import socket
 from Crypto.Cipher import AES
+import bcrypt
 
 host = "localhost"
 port = 10001
@@ -55,6 +56,19 @@ def decrypt_message(client_message, session_key):
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
     # TODO: Implement this function
+    message = message.encode("utf-8")
+
+    server_private_key = RSA.import_key(open("RSA_keys").read())
+
+    #Encrypt the session key with the servers public RSA key
+    cipher_rsa = PKCS1_OAEP.new(server_private_key)
+    enc_session_key = cipher_rsa.encrypt(session_key)
+
+    #Encrypt the user and pass with the AES session key
+    cipher_aes = AES.new(session_key, AES.MODE_EAX)
+    ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+
+    return ciphertext + " " + tag
     pass
 
 
@@ -83,7 +97,8 @@ def verify_hash(user, password):
             line = line.split("\t")
             if line[0] == user:
                 # TODO: Generate the hashed password
-                # hashed_password =
+                salt = bcrypt.gensalt(rounds=16)
+                hashed_password = bcrypt.hashpw(password, salt)
                 return hashed_password == line[2]
         reader.close()
     except FileNotFoundError:
@@ -121,9 +136,9 @@ def main():
                 ciphertext_message = receive_message(connection)
 
                 # TODO: Decrypt message from client
-
+                plain_message = decrypt_message(ciphertext_message, encrypted_key)
                 # TODO: Split response from user into the username and password
-
+                plain_message.split(' ', 1)
                 # TODO: Encrypt response to client
 
                 # Send encrypted response
