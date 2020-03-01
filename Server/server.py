@@ -38,13 +38,18 @@ def decrypt_key(session_key):
 # Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
     # TODO: Implement this function
+    client_message.split(' ', 1)
+
     p_key = RSA.import_key(open("RSA_keys").read())
 
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = cipher.decrypt(session_key)
 
+    userpassKey = AES.new(plainKey, AES.MODE_EAX)
+    userpass = userpassKey.decrypt_and_verify(client_message[0], client_message[1])
 
-    pass
+
+    return userpass
 
 
 # Encrypt a message using the session key
