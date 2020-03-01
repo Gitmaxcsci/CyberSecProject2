@@ -14,7 +14,9 @@
 """
 
 import socket
-from Crypto.Cipher import AES
+import os
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES, PKCS1_OAEP
 import bcrypt
 
 host = "localhost"
@@ -29,7 +31,7 @@ def pad_message(message):
 # Write a function that decrypts a message using the server's private key
 def decrypt_key(session_key):
     # TODO: Implement this function
-    p_key = RSA.import_key(open("RSA_keys").read())
+    p_key = RSA.import_key(open(os.path.dirname(__file__) + '/RSA_keys').read())
 
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = cipher.decrypt(session_key)
