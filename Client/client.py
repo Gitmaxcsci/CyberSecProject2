@@ -15,7 +15,7 @@
 
 import socket
 import os
-
+from Crypto.Cipher import AES
 
 host = "localhost"
 port = 10001
@@ -30,7 +30,9 @@ def pad_message(message):
 # TODO: Generate a cryptographically random AES key
 def generate_key():
     # TODO: Implement this function
-    pass
+    rand_key = os.urandom(16)
+    return AES.new(key, AES.MODE_EAX)
+
 
 
 # Takes an AES session key and encrypts it using the appropriate
