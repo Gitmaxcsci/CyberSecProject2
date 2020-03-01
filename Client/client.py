@@ -32,7 +32,8 @@ def pad_message(message):
 def generate_key():
     # TODO: Implement this function
     rand_key = os.urandom(16)
-    return AES.new(rand_key, AES.MODE_EAX)
+    return rand_key
+    # return AES.new(rand_key, AES.MODE_EAX)
 
 
 # Takes an AES session key and encrypts it using the appropriate
