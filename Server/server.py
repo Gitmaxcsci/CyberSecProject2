@@ -58,8 +58,9 @@ def decrypt_message(client_message, session_key):
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    message = message.encode("utf-8")
     message = pad_message(message)
+
+    message = message.encode("utf-8")
 
     server_private_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
 
