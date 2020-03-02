@@ -8,8 +8,9 @@
         is provided as a sanity check)
 
     Put your team members' names:
-
-
+Jack Spicer
+Max Shetterly
+Ben Prucha
 
 """
 
@@ -60,7 +61,7 @@ def encrypt_message(message, session_key):
     # TODO: Implement this function
     message = pad_message(message)
     message = message.encode("utf-8")
-    
+
 
     message = message.encode("utf-8")
 
