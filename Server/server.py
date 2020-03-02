@@ -15,6 +15,7 @@
 
 import socket
 import os
+import pickle
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 import bcrypt
@@ -41,27 +42,23 @@ def decrypt_key(session_key):
 # Write a function that decrypts a message using the session key
 def decrypt_message(client_message, session_key):
     # TODO: Implement this function
-    client_message.split(' ')
+    client_message = pickle.loads(client_message)
 
     p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
 
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = cipher.decrypt(session_key)
 
-    userpassKey = AES.new(plainKey, AES.MODE_EAX)
+    userpassKey = AES.new(plainKey, AES.MODE_EAX, client_message[2])
     userpass = userpassKey.decrypt_and_verify(client_message[0], client_message[1])
 
-
-    return userpass
+    return str(userpass)
 
 
 # Encrypt a message using the session key
 def encrypt_message(message, session_key):
     # TODO: Implement this function
     message = pad_message(message)
-    message = message.encode("utf-8")
-    
-
     message = message.encode("utf-8")
 
     server_private_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
@@ -72,10 +69,9 @@ def encrypt_message(message, session_key):
 
     #Encrypt the user and pass with the AES session key
     cipher_aes = AES.new(session_key, AES.MODE_EAX)
-    ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+    ciphertext, tag = cipher_aes.encrypt_and_digest(message)
 
-    return ciphertext + " " + tag
-    pass
+    return pickle.dumps([ciphertext, tag, cipher_aes.nonce])
 
 
 # Receive 1024 bytes from the client
@@ -144,15 +140,15 @@ def main():
                 # TODO: Decrypt message from client
                 plain_message = decrypt_message(ciphertext_message, encrypted_key)
                 # TODO: Split response from user into the username and password
-                plain_message.split(' ', 1)
+                plain_message.split(' ')
                 if verify_hash(plain_message[0], plain_message[1]):
                     message = "User successfully Authenticated!"
                 else:
                     message = "Password or username incorrect"
                 # TODO: Encrypt response to client
-                encrypt_message(message, plaintext_key)
+                server_response  = encrypt_message(message, plaintext_key)
                 # Send encrypted response
-                send_message(connection, ciphertext_response)
+                send_message(connection, server_response)
             finally:
                 # Clean up the connection
                 connection.close()

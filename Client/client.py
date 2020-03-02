@@ -15,6 +15,7 @@
 
 import socket
 import os
+import pickle
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 
@@ -64,23 +65,21 @@ def encrypt_message(message, session_key):
     cipher_aes = AES.new(session_key, AES.MODE_EAX)
     ciphertext, tag = cipher_aes.encrypt_and_digest(message)
 
-    enc_message = str(ciphertext) + " " + str(tag)
-    return enc_message.encode("utf-8")
-
+    return pickle.dumps([ciphertext, tag, cipher_aes.nonce])
 
 
 # Decrypts the message using AES. Same as server function
 def decrypt_message(message, session_key):
     # TODO: Implement this function
-    client_message.split(' ')
+    message = pickle.loads(message)
 
     p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = cipher.decrypt(session_key)
 
-    server_message = AES.new(plainKey, AES.MODE_EAX)
-    print(server_message.decrypt_and_verify(client_message[0], client_message[1]))
+    server_message = AES.new(plainKey, AES.MODE_EAX, message[2])
+    print(server_message.decrypt_and_verify(message[0], message[1]))
 
     return
 
@@ -125,6 +124,8 @@ def main():
         if receive_message(sock).decode() != "okay":
             print("Couldn't connect to server")
             exit(0)
+        else:
+            print("Received okay from server")
 
         # TODO: Encrypt message and send to server
         payload = encrypt_message(message, key)
