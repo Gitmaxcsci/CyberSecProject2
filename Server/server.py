@@ -19,7 +19,7 @@ import os
 import pickle
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
-import bcrypt
+import hashlib
 
 host = "localhost"
 port = 10001
@@ -101,10 +101,17 @@ def verify_hash(user, password):
             line = line.split("\t")
             if line[0] == user:
                 # TODO: Generate the hashed password
-                # salt = line[1]
-                # print(salt)
-                password = password.encode('utf-8')
-                return bcrypt.checkpw(password, line[2].encode('utf-8'))
+                salt = line[1]
+                hashed_pw = hashlib.pbkdf2_hmac(
+                    'sha256',
+                    password.encode('utf-8'),
+                    salt,
+                    100000 #Number of SHA iterations.
+                    )
+                print("Entered Password and Stored Password")
+                print(hashed_pw)
+                print(line[2])
+                return hashed_pw == line[2]
         reader.close()
     except FileNotFoundError:
         return False

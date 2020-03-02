@@ -5,16 +5,23 @@
 	Authors: Matt Niemiec and Abigail Fernandes
 	The solution contains the same number of lines (plus imports)
 """
-import bcrypt
+import hashlib
+import time
+import os
 
 user = input("Enter a username: ")
 password = input("Enter a password: ")
-password = password.encode('utf-8')
+
 
 # TODO: Create a salt and hash the password
-salt = bcrypt.gensalt(rounds=16)
-hashed_password = bcrypt.hashpw(password, salt)
-
+salt = os.urandom(32)
+hashed_password = hashlib.pbkdf2_hmac(
+	'sha256',
+	password.encode('utf-8'),
+	salt,
+	100000
+	)
+print(salt)
 
 try:
 	reading = open("passfile.txt", 'r')
