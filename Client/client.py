@@ -50,8 +50,9 @@ def encrypt_handshake(session_key):
 # Encrypts the message using AES. Same as server function
 def encrypt_message(message, session_key):
     # TODO: Implement this function
-    message = message.encode("utf-8")
     message = pad_message(message)
+    message = message.encode("utf-8")
+    
 
     server_public_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 
@@ -61,9 +62,10 @@ def encrypt_message(message, session_key):
 
     #Encrypt the user and pass with the AES session key
     cipher_aes = AES.new(session_key, AES.MODE_EAX)
-    ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+    ciphertext, tag = cipher_aes.encrypt_and_digest(message)
 
-    return ciphertext + " " + tag
+    enc_message = str(ciphertext) + " " + str(tag)
+    return enc_message.encode("utf-8")
 
 
 
