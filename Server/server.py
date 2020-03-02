@@ -102,16 +102,17 @@ def verify_hash(user, password):
             if line[0] == user:
                 # TODO: Generate the hashed password
                 salt = line[1]
+                # print(bytes.fromhex(salt))
                 hashed_pw = hashlib.pbkdf2_hmac(
                     'sha256',
                     password.encode('utf-8'),
-                    salt,
+                    bytes.fromhex(salt),
                     100000 #Number of SHA iterations.
                     )
-                print("Entered Password and Stored Password")
-                print(hashed_pw)
-                print(line[2])
-                return hashed_pw == line[2]
+                # print("Entered Password and Stored Password")
+                # print(hashed_pw.hex())
+                # print(line[2])
+                return hashed_pw.hex() == line[2]
         reader.close()
     except FileNotFoundError:
         return False

@@ -22,6 +22,11 @@ hashed_password = hashlib.pbkdf2_hmac(
 	100000
 	)
 print(salt)
+salt = salt.hex()
+hashed_password = hashed_password.hex()
+# print(salt)
+# print(hashed_password)
+
 
 try:
 	reading = open("passfile.txt", 'r')
