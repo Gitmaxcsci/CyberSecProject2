@@ -62,6 +62,8 @@ def encrypt_message(message, session_key):
     message = message.encode("utf-8")
     
 
+    message = message.encode("utf-8")
+
     server_private_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys').read())
 
     #Encrypt the session key with the servers public RSA key
