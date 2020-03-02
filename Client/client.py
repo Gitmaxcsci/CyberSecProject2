@@ -76,7 +76,7 @@ def decrypt_message(message, session_key):
     p_key = RSA.import_key(open(os.path.dirname(__file__) + '/../Server/RSA_keys.pub').read())
 
     cipher = PKCS1_OAEP.new(p_key)
-    plainKey = cipher.decrypt(session_key)
+    plainKey = session_key
 
     server_message = AES.new(plainKey, AES.MODE_EAX, message[2])
     print(server_message.decrypt_and_verify(message[0], message[1]))

@@ -53,7 +53,8 @@ def decrypt_message(client_message, session_key):
     userpassKey = AES.new(plainKey, AES.MODE_EAX, client_message[2])
     userpass = userpassKey.decrypt_and_verify(client_message[0], client_message[1])
 
-    return str(userpass)
+    return userpass.decode("utf-8")
+    
 
 
 # Encrypt a message using the session key
@@ -100,9 +101,10 @@ def verify_hash(user, password):
             line = line.split("\t")
             if line[0] == user:
                 # TODO: Generate the hashed password
-                salt = bcrypt.gensalt(rounds=16)
-                hashed_password = bcrypt.hashpw(password, salt)
-                return hashed_password == line[2]
+                # salt = line[1]
+                # print(salt)
+                password = password.encode('utf-8')
+                return bcrypt.checkpw(password, line[2].encode('utf-8'))
         reader.close()
     except FileNotFoundError:
         return False
@@ -141,7 +143,8 @@ def main():
                 # TODO: Decrypt message from client
                 plain_message = decrypt_message(ciphertext_message, encrypted_key)
                 # TODO: Split response from user into the username and password
-                plain_message.split(' ')
+                print("Return message is: " + plain_message)
+                plain_message = plain_message.split(' ')
                 if verify_hash(plain_message[0], plain_message[1]):
                     message = "User successfully Authenticated!"
                 else:

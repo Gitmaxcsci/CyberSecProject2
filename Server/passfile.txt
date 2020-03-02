@@ -1,1 +1,2 @@
 jackspicer	b'$2b$16$bAx5mPmVtb7BhpS6/2oD5e'	b'$2b$16$bAx5mPmVtb7BhpS6/2oD5eAgrKv3hlprqGju3HvWnRhtTIOByiCXq'
+testuser	b'$2b$16$xsc.pR6goulBJg2cT272iu'	b'$2b$16$xsc.pR6goulBJg2cT272iuCWB2gBOx8yzPxSy6jxDoFXVIWz1y17e'
