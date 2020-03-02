@@ -8,8 +8,9 @@
         is provided as a sanity check)
 
     Put your team members' names:
-
-
+Jack Spicer
+Max Shetterly
+Ben Prucha
 
 """
 
