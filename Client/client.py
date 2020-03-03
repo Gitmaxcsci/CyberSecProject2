@@ -34,7 +34,6 @@ def generate_key():
     # TODO: Implement this function
     rand_key = os.urandom(16)
     return rand_key
-    # return AES.new(rand_key, AES.MODE_EAX)
 
 
 # Takes an AES session key and encrypts it using the appropriate
@@ -78,8 +77,10 @@ def decrypt_message(message, session_key):
     cipher = PKCS1_OAEP.new(p_key)
     plainKey = session_key
 
+    #Decrypt what we received from the server and print whether we were successfuly authenticated or not
     server_message = AES.new(plainKey, AES.MODE_EAX, message[2])
-    print(server_message.decrypt_and_verify(message[0], message[1]))
+    returned_message = str(server_message.decrypt_and_verify(message[0], message[1]))
+    print(returned_message[2:len(returned_message)-1])
 
     return
 

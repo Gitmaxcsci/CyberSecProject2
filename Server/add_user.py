@@ -14,18 +14,13 @@ password = input("Enter a password: ")
 
 
 # TODO: Create a salt and hash the password
+#Create a 32-byte salt from os.urandom and use it hash the password using SHA-256
 salt = os.urandom(32)
-hashed_password = hashlib.pbkdf2_hmac(
-	'sha256',
-	password.encode('utf-8'),
-	salt,
-	100000
-	)
-print(salt)
+hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+
+#Convert the salt and hashed password to hex to store it in the file
 salt = salt.hex()
 hashed_password = hashed_password.hex()
-# print(salt)
-# print(hashed_password)
 
 
 try:
