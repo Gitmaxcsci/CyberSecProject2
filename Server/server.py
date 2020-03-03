@@ -75,6 +75,63 @@ def encrypt_message(message, session_key):
 
     return pickle.dumps([ciphertext, tag, cipher_aes.nonce])
 
+def mac_clearance_auth(resource, rw, clearance, user_input):
+    read_return = ""
+    if(rw == 'w'):
+        if(resource <= clearance):
+            print("Clearance authorized, writing payload to file")
+            file_name = None
+            if(resource == '1'):
+                file_name = "topsecret.txt"
+            elif(resource == '2'):
+                file_name = "secret.txt"
+            elif(resource == '3'):
+                file_name = "confidential.txt"
+            elif(resource == '4'):
+                file_name = "unclassified.txt"
+
+            if(file_name == None):
+                print("Could not find file. Exiting")
+                exit()
+
+            user_input = bytes.fromhex(user_input)
+            user_input = user_input.decode('utf-8')
+
+            with open("Server/" + file_name, 'a+') as writer:
+                writer.write("{0}\n".format(user_input))
+                print("Write successful.")
+            return True, read_return
+        else:
+            print("Client resource request denied. Invalid clearance level")
+            read_return = "Requested resource to read is " + str(resource) + " which is above your clearance level."
+            return False, read_return
+    if(rw == 'r'):
+        if(resource >= clearance):
+            print("Clearance authorized, printing file: ")
+            file_name = None
+            if(resource == '1'):
+                file_name = "topsecret.txt"
+            elif(resource == '2'):
+                file_name = "secret.txt"
+            elif(resource == '3'):
+                file_name = "confidential.txt"
+            elif(resource == '4'):
+                file_name = "unclassified.txt"
+
+            if(file_name == None):
+                print("Could not find file. Exiting")
+                exit()
+                
+            reader = open("Server/" + file_name, 'r')
+            for line in reader.read().split('\n'):
+                read_return = read_return + line + '\n'
+            return True, read_return
+        else:
+            print("Client resource request denied. Invalid clearance level")
+            read_return = "Requested resource to write to is " + str(resource) + " which is below your clearance level."
+            return False, read_return
+
+
 
 # Receive 1024 bytes from the client
 def receive_message(connection):
@@ -104,7 +161,8 @@ def verify_hash(user, password):
                 #Pull the salt from the file
                 salt = line[1]
                 hashed_pw = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), bytes.fromhex(salt), 100000)
-                return hashed_pw.hex() == line[2]
+                result = hashed_pw.hex() == line[2]
+                return result, line[3]
         reader.close()
     except FileNotFoundError:
         return False
@@ -142,13 +200,28 @@ def main():
 
                 # TODO: Decrypt message from client
                 plain_message = decrypt_message(ciphertext_message, encrypted_key)
+
                 # TODO: Split response from user into the username and password
                 print("Return message is: " + plain_message)
                 plain_message = plain_message.split(' ')
-                if verify_hash(plain_message[0], plain_message[1]):
+                verification_result, clearance = verify_hash(plain_message[0], plain_message[1])
+                if verification_result:
                     message = "User successfully Authenticated!"
                 else:
                     message = "Password or username incorrect"
+
+                #TODO Mac clearance
+                mac_success, read_val = mac_clearance_auth(plain_message[2], plain_message[3], clearance, plain_message[4])
+                if(mac_success):
+                    print("Authorization and read and/or write successful")
+                    if(plain_message[3]=='r'):
+                        message = message + ' ' + read_val
+                    else:
+                        message = message + ' ' + read_val
+                else:
+                    print("MAC Authorization failed")
+                    message = message + ' ' + read_val
+
                 # TODO: Encrypt response to client
                 server_response  = encrypt_message(message, plaintext_key)
                 # Send encrypted response

@@ -99,6 +99,36 @@ def receive_message(sock):
 def main():
     user = input("What's your username? ")
     password = input("What's your password? ")
+    access_resource = input("Would you like to access a resource? Enter 1 for yes, 0 for no: ")
+    resource = None
+    rw = None
+    write = "-1"
+    if(int(access_resource)):
+        print("You may choose from top secret, secret, confidential, or unclassified information.")
+        print("\t1. Top Secret")
+        print("\t2. Secret")
+        print("\t3. Confidential")
+        print("\t4. Unclassified")
+        resource = input("Please enter the number of the option would like to access: ")
+        if(int(resource)>4 or int(resource)<0):
+            print("Invalid resource requested. Exiting")
+            exit()
+        rw = input("Would you like to read or write to the file? Please enter 1 for read, 0 for write: ")
+
+        if(rw=="1"):
+            rw = "r"
+        elif(rw=="0"):
+            rw = "w"
+            write = input("Enter what you would like to write the text file: ")
+            write = write.encode("utf-8")
+            write = write.hex()
+        else:
+            print("Please enter a 0 or 1. Exiting")
+            exit()
+    else:
+        print("Exiting program.")
+        exit()
+    
 
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -110,7 +140,7 @@ def main():
 
     try:
         # Message that we need to send
-        message = user + ' ' + password
+        message = user + ' ' + password + ' ' + resource + ' ' + rw + ' ' + write
 
         # Generate random AES key
         key = generate_key()

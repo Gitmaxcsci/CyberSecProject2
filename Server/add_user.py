@@ -11,7 +11,11 @@ import os
 
 user = input("Enter a username: ")
 password = input("Enter a password: ")
+clearance = input("Enter the users clearance from 1-4 (high to low): ")
 
+if(int(clearance)>4 or int(clearance)<0):
+	print("Invalid clearance entered. Exiting")
+	quit()
 
 # TODO: Create a salt and hash the password
 #Create a 32-byte salt from os.urandom and use it hash the password using SHA-256
@@ -34,5 +38,5 @@ except FileNotFoundError:
 	pass
 
 with open("passfile.txt", 'a+') as writer:
-	writer.write("{0}\t{1}\t{2}\n".format(user, salt, hashed_password))
+	writer.write("{0}\t{1}\t{2}\t{3}\n".format(user, salt, hashed_password, clearance))
 	print("User successfully added!")
